@@ -214,7 +214,7 @@ export default {
         name: "babyAntStartingFoodLevel",
         label: "Baby Ant Starting Food Level",
       },
-      { value: 1, name: " crossoverRate", label: "Crossover Rate (in 100)" },
+      { value: 1, name: "crossoverRate", label: "Crossover Rate (in 100)" },
       {
         value: 100,
         name: "alleleMutationChance",

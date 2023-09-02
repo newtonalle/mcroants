@@ -22,3 +22,12 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### 2023-06-09
+
+* RELEASE!
+
+### BETA 1.1 PLANS
+
+* Fix Consumable Spawning System (From Guessing to Picking at Random, based on an array)

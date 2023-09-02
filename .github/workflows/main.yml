@@ -17,7 +17,7 @@ jobs:
           username: 'newtonalle'
         run: |
           git config --global credential.helper store
-          echo "https://${{ secret.GIT_TOKEN }}:x-oauth-basic@github.com" > ~/.git-credentials
+          echo "https://${{ secrets.GIT_TOKEN }}:x-oauth-basic@github.com" > ~/.git-credentials
           cat ~/.git-credentials
           git config --global user.email $email
           git config --global user.name $username

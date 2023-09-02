@@ -15,10 +15,11 @@ jobs:
         env:
           email: 'newtonalle@gmail.com'
           username: 'newtonalle'
-          access_token: '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'
+          access_token: {{ secret.GIT_TOKEN }}
         run: |
           git config --global credential.helper store
           echo "https://${access_token}:x-oauth-basic@github.com" > ~/.git-credentials
+          cat ~/.git-credentials
           git config --global user.email $email
           git config --global user.name $username
       - name: deploy to gh-pages

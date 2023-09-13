@@ -25,6 +25,18 @@ const POSSIBLE_DIRECTIONS = [
     3 // LEFT
 ]
 
+const GENE_LOCUS = {
+    vision: 0,
+    exploration: 1,
+    poisonIdentification: 2,
+    foodForMating: 3,
+    foodSharing: 4,
+    antVision: 5,
+    antEaterVision: 6,
+    agression: 7,
+    strength: 8,
+}
+
 function calculateDirectionFormula(direction, startingPosition, distance) {
     let formula = []
     switch (direction) {
@@ -173,6 +185,9 @@ export const generateAnts = (state) => {
                 firstParentId: -1,
                 secondParentId: -1,
                 kills: 0,
+                breedings: 0,
+                highestFoodLevel: state.gameState.worldOptions.babyAntStartingFoodLevel,
+                tracked: false,
             }
 
             state.gameState[antType].push(ant)
@@ -193,7 +208,7 @@ export const chooseAntsDirection = (state, { antType, antPhenotype, globalAnts }
             // ** HAS TO GO FIRST IN CASE THE ANT DECIDES TO EXPLORE IN THE DIRECTION OF POISON **
 
             if (ant.direction === -1) {
-                switch (antPhenotype[ant.id][1]) {
+                switch (antPhenotype[ant.id][GENE_LOCUS.exploration]) {
                     case 0:
                         // NO MOVEMENT
                         break;
@@ -229,7 +244,7 @@ export const chooseAntsDirection = (state, { antType, antPhenotype, globalAnts }
 
             // IDENTIFICATE NEARBY FOOD
 
-            for (let distanceFromAnt = 1; distanceFromAnt <= antPhenotype[ant.id][0] && !decidedDirection; distanceFromAnt++) {
+            for (let distanceFromAnt = 1; distanceFromAnt <= antPhenotype[ant.id][GENE_LOCUS.vision] && !decidedDirection; distanceFromAnt++) {
 
                 // LOOKING FOR FOODS IN RANGE
 
@@ -247,7 +262,7 @@ export const chooseAntsDirection = (state, { antType, antPhenotype, globalAnts }
 
                                 // IF THERE IS SOMETHING IN THE TILE
 
-                                if (antPhenotype[ant.id][2] === 1 && identifiedTile === 2) {
+                                if (antPhenotype[ant.id][GENE_LOCUS.poisonIdentification] === 1 && identifiedTile === 2) {
 
                                     // IF THERE IS POISON IN THIS DIRECTION AND THE ANT SEES IT
 
@@ -307,65 +322,66 @@ export const chooseAntsDirection = (state, { antType, antPhenotype, globalAnts }
 
                 // FOUND ANT
 
-                POSSIBLE_DIRECTIONS.forEach(possibleDirection => {
-                    if (!directionsLocked[possibleDirection]) {
+                if (antPhenotype[ant.id][GENE_LOCUS.antVision]) {
+                    POSSIBLE_DIRECTIONS.forEach(possibleDirection => {
+                        if (!directionsLocked[possibleDirection]) {
 
-                        let directionFormula = calculateDirectionFormula(possibleDirection, ant.position, distanceFromAnt)
+                            let directionFormula = calculateDirectionFormula(possibleDirection, ant.position, distanceFromAnt)
 
-                        if (validPosition(directionFormula, state.gameState.worldOptions.gridSize)) {
+                            if (validPosition(directionFormula, state.gameState.worldOptions.gridSize)) {
 
-                            let identifiedTile = state.gameState.antMap[directionFormula[0]][directionFormula[1]]
+                                let identifiedTile = state.gameState.antMap[directionFormula[0]][directionFormula[1]]
 
-                            if (identifiedTile.length > 0) {
+                                if (identifiedTile.length > 0) {
 
-                                identifiedTile.forEach(antId => {
+                                    identifiedTile.forEach(antId => {
 
-                                    let foundAnt = globalAnts.find(findAnt => findAnt.id === antId)
+                                        let foundAnt = globalAnts.find(findAnt => findAnt.id === antId)
 
-                                    // ANALYSE IF OTHER ANT IS A POSSIBLE MATE
-
-
-                                    // Calculate which of the ants has the highest "food for mating" phenotype
-
-                                    let highestPhenotype
-
-                                    if (antPhenotype[foundAnt.id][3] >= antPhenotype[ant.id][3]) {
-
-                                        // If the first ant's phenotype is higher or equal to the second's
-
-                                        highestPhenotype = antPhenotype[foundAnt.id][3]
-                                    } else {
-
-                                        // If the second ant's phenotype is higher than the first's
-
-                                        highestPhenotype = antPhenotype[ant.id][3]
-                                    }
+                                        // ANALYSE IF OTHER ANT IS A POSSIBLE MATE
 
 
+                                        // Calculate which of the ants has the highest "food for mating" phenotype
 
-                                    if (foundAnt.type === ant.type && foundAnt.foodLevel > BASE_FOOD_FOR_MATING * (highestPhenotype + 1) && ant.foodLevel > BASE_FOOD_FOR_MATING * (highestPhenotype + 1)) {
+                                        let highestPhenotype
 
-                                        // TRY TO APROACH POSSIBLE MATE
+                                        if (antPhenotype[foundAnt.id][GENE_LOCUS.foodForMating] >= antPhenotype[ant.id][GENE_LOCUS.foodForMating]) {
 
-                                        if (foundAnt.direction === calculateOpositeDirection(possibleDirection) && distanceFromAnt === 1) {
-                                            direction = -1
-                                            ant.direction = direction
+                                            // If the first ant's phenotype is higher or equal to the second's
+
+                                            highestPhenotype = antPhenotype[foundAnt.id][GENE_LOCUS.foodForMating]
                                         } else {
-                                            direction = possibleDirection
+
+                                            // If the second ant's phenotype is higher than the first's
+
+                                            highestPhenotype = antPhenotype[ant.id][GENE_LOCUS.foodForMating]
                                         }
 
-                                        decidedDirection = true
-                                    }
+
+
+                                        if (foundAnt.type === ant.type && foundAnt.foodLevel > BASE_FOOD_FOR_MATING * (highestPhenotype + 1) && ant.foodLevel > BASE_FOOD_FOR_MATING * (highestPhenotype + 1)) {
+
+                                            // TRY TO APROACH POSSIBLE MATE
+
+                                            if (foundAnt.direction === calculateOpositeDirection(possibleDirection) && distanceFromAnt === 1) {
+                                                direction = -1
+                                                ant.direction = direction
+                                            } else {
+                                                direction = possibleDirection
+                                            }
+
+                                            decidedDirection = true
+                                        }
 
 
 
 
-                                });
+                                    });
+                                }
                             }
                         }
-                    }
-                });
-
+                    });
+                }
             }
 
             if (direction != -1) {
@@ -458,8 +474,9 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                     ant.foodLevel--
                     if (ant.foodLevel <= 0) {
-                        console.log(`Ant #${ant.id} died!`)
+                        console.log(`Ant #${ant.id} died of hunger!`)
                         ant.alive = false
+                        state.gameState.universeStatus.antDeaths++
                         ant.deathCycle = state.gameState.currentCycle
                     }
 
@@ -471,7 +488,10 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                     if (state.gameState.worldOptions.advancedOptions.poisonDisappear) {
                         state.gameState.consumablesMap[ant.position[0]][ant.position[1]] = 0
                     }
+                    state.gameState.universeStatus.poisonEaten++
+                    console.log(`Ant #${ant.id} died of poisoning!`)
                     ant.alive = false
+                    state.gameState.universeStatus.antDeaths++
                     ant.deathCycle = state.gameState.currentCycle
                 }
 
@@ -483,7 +503,11 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                     if (state.gameState.consumablesMap[ant.position[0]][ant.position[1]] === 1) {
                         state.gameState.consumablesMap[ant.position[0]][ant.position[1]] = 0
+                        state.gameState.universeStatus.foodEaten++
                         ant.foodLevel += state.gameState.worldOptions.foodValue
+                        if (ant.foodLevel > ant.highestFoodLevel) {
+                            ant.highestFoodLevel = ant.foodLevel
+                        }
                         ant.direction = -1
                     }
                 } else {
@@ -532,16 +556,16 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                         let highestPhenotype
 
-                        if (antPhenotype[idPair[0]][3] >= antPhenotype[idPair[1]][3]) {
+                        if (antPhenotype[idPair[0]][GENE_LOCUS.foodForMating] >= antPhenotype[idPair[1]][GENE_LOCUS.foodForMating]) {
 
                             // If the first ant's phenotype is higher or equal to the second's
 
-                            highestPhenotype = antPhenotype[idPair[0]][3]
+                            highestPhenotype = antPhenotype[idPair[0]][GENE_LOCUS.foodForMating]
                         } else {
 
                             // If the second ant's phenotype is higher than the first's
 
-                            highestPhenotype = antPhenotype[idPair[1]][3]
+                            highestPhenotype = antPhenotype[idPair[1]][GENE_LOCUS.foodForMating]
                         }
 
                         if (antPair[0].foodLevel > BASE_FOOD_FOR_MATING * (highestPhenotype + 1) && antPair[1].foodLevel > BASE_FOOD_FOR_MATING * (highestPhenotype + 1)) {
@@ -568,7 +592,7 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                         let shareFood = false
 
-                        switch (antPhenotype[idPair[leastHungryAnt]][4]) {
+                        switch (antPhenotype[idPair[leastHungryAnt]][GENE_LOCUS.foodSharing]) {
                             case 0:
 
                                 // Don't share
@@ -587,7 +611,7 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                                 // Shares with other ants with the allele 2
 
-                                if (antPhenotype[idPair[hungriestAnt]][4] === 2) {
+                                if (antPhenotype[idPair[hungriestAnt]][GENE_LOCUS.foodSharing] === 2) {
                                     shareFood = true
                                 }
 
@@ -597,7 +621,7 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                                 // Share with other ants with the allele 0 or 1
 
-                                if (antPhenotype[idPair[hungriestAnt]][4] === 0 || antPhenotype[idPair[hungriestAnt]][4] === 1) {
+                                if (antPhenotype[idPair[hungriestAnt]][GENE_LOCUS.foodSharing] === 0 || antPhenotype[idPair[hungriestAnt]][GENE_LOCUS.foodSharing] === 1) {
                                     shareFood = true
                                 }
 
@@ -610,8 +634,12 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                         if (shareFood) {
                             friendlyRelation = true
                             let amountShared = Math.ceil((antPair[leastHungryAnt].foodLevel / 100) * BASE_FOOD_FOR_SHARING_PERCENTAGE)
+                            state.gameState.universeStatus.foodPointsShared += amountShared
                             antPair[leastHungryAnt].foodLevel -= amountShared
                             antPair[hungriestAnt].foodLevel += amountShared
+                            if (antPair[hungriestAnt].foodLevel > antPair[hungriestAnt].highestFoodLevel) {
+                                antPair[hungriestAnt].highestFoodLevel = antPair[hungriestAnt].foodLevel
+                            }
                         }
                     }
 
@@ -623,7 +651,7 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                     // Determine either or not combat will happen
 
                     if (!friendlyRelation) {
-                        switch (antPhenotype[idPair[0]][7]) {
+                        switch (antPhenotype[idPair[0]][GENE_LOCUS.agression]) {
                             case 0:
 
                                 break;
@@ -650,7 +678,7 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                                 break;
                         }
 
-                        switch (antPhenotype[idPair[1]][7]) {
+                        switch (antPhenotype[idPair[1]][GENE_LOCUS.agression]) {
                             case 0:
 
                                 break;
@@ -680,12 +708,15 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                         // In case of combat
 
                         if (startCombat) {
+
+                            state.gameState.universeStatus.fightsOccurred++
+
                             let combatPoints = [
                                 0, 0
                             ]
 
-                            combatPoints[0] = (antPhenotype[idPair[0]][8] + 1) * (Math.floor(Math.random() * antPair[0].kills) + (antPair[0].foodLevel / 10))
-                            combatPoints[1] = (antPhenotype[idPair[1]][8] + 1) * (Math.floor(Math.random() * antPair[1].kills) + (antPair[1].foodLevel / 10))
+                            combatPoints[0] = (antPhenotype[idPair[0]][GENE_LOCUS.strength] + 1) * (Math.floor(Math.random() * antPair[0].kills) + (antPair[0].foodLevel / 10))
+                            combatPoints[1] = (antPhenotype[idPair[1]][GENE_LOCUS.strength] + 1) * (Math.floor(Math.random() * antPair[1].kills) + (antPair[1].foodLevel / 10))
 
                             let winner = -1
                             let loser = -1
@@ -700,9 +731,12 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                             if (winner != -1) {
                                 antPair[winner].foodLevel += antPair[loser].foodLevel
+                                state.gameState.universeStatus.antKills++
                                 antPair[winner].kills++
 
+                                console.log(`Ant #${antPair[loser].id} was killed by ${antPair[winner].id}!`)
                                 antPair[loser].alive = false
+                                state.gameState.universeStatus.antDeaths++
                                 antPair[loser].deathCycle = state.gameState.currentCycle
                                 let antIndex = state.gameState.antMap[antPair[loser].position[0]][antPair[loser].position[1]].findIndex((antId) => antId === antPair[loser].id)
                                 state.gameState.antMap[antPair[loser].position[0]][antPair[loser].position[1]].splice(antIndex, 1)
@@ -746,6 +780,10 @@ export const breedAnts = (state, { firstParent, secondParent, antType }) => {
 
     firstParent.foodLevel -= state.gameState.worldOptions.advancedOptions.matingCost
     secondParent.foodLevel -= state.gameState.worldOptions.advancedOptions.matingCost
+
+    state.gameState.universeStatus.breedingsOccurred++
+    firstParent.breedings++
+    secondParent.breedings++
 
     let id = state.gameState.currentHighestAntID + 1
     state.gameState.currentHighestAntID++
@@ -861,8 +899,15 @@ export const breedAnts = (state, { firstParent, secondParent, antType }) => {
         firstParentId: firstParent.id,
         secondParentId: secondParent.id,
         kills: 0,
+        breedings: 0,
+        highestFoodLevel: state.gameState.worldOptions.babyAntStartingFoodLevel,
+        tracked: false,
     }
 
     state.gameState[antType].push(resultingAnt)
 }
 
+
+export const trackAnt = (state, { globalAnts, id }) => {
+    globalAnts.find((ant) => ant.id === id).tracked = !globalAnts.find((ant) => ant.id === id).tracked
+}

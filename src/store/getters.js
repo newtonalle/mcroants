@@ -4,6 +4,8 @@ export const getSimulationStarted = (state) => state.gameState.simulationStarted
 
 export const getConfigDescription = () => CONFIG_DESCRIPTION
 
+export const getUniverseStatus = (state) => state.gameState.universeStatus
+
 export const getRedAnts = (state) => state.gameState.redAnts
 
 export const getBlackAnts = (state) => state.gameState.blackAnts

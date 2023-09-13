@@ -53,6 +53,12 @@ export const BASE_ANT = {
     secondParentId: -1, // The ID of the ant's second parent (-1 refers to ants that spawned when the simulation started)
 
     kills: 0, // The number of ants killed by this ant
+
+    breedings: 0, // The number of breedings that happened with this ant
+
+    highestFoodLevel: 0, // The highest number of food levels this ant ever had
+
+    tracked: false, // Either or not the current ant is being tracked (changing its color)
 }
 
 export const BASE_ANTEATER = {

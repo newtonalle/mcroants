@@ -26,12 +26,14 @@ export default () => ({
             ants: {
                 blackAnts: {
                     startingNumber: 2, // RECOMENDED 10 - 30
-                    color: '#FFFFFF', // RECOMENDED: #000000 or #FFFFFF 
+                    color: '#FFFFFF', // RECOMENDED: #000000 or #FFFFFF
+                    trackedColor: '#89f0a4', // RECOMENDED: #89f0a4
                 },
 
                 redAnts: {
                     startingNumber: 2, // RECOMENDED 10 - 30
                     color: '#FF0000', // RECOMENDED: #FF0000
+                    trackedColor: '#fa7f7f', // RECOMENDED: #fa7f7f
                 },
             },
 
@@ -51,6 +53,22 @@ export default () => ({
                 poisonDisappear: false,
                 matingCost: 500,
             }
+        },
+
+        universeStatus: {
+            foodEaten: 0,
+
+            poisonEaten: 0,
+
+            antDeaths: 0,
+
+            antKills: 0,
+
+            breedingsOccurred: 0,
+
+            foodPointsShared: 0,
+
+            fightsOccurred: 0,
         },
 
         baseWorldGrid: [],

@@ -34,3 +34,7 @@ export const breedAnts = (context, { firstParentId, secondParentId, antType }) =
 
     context.commit('breedAnts', { firstParent, secondParent, antType })
 }
+
+export const trackAnt = (context, id) => {
+    context.commit('trackAnt', { globalAnts: context.getters.getGlobalAnts, id: id })
+}

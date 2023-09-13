@@ -1,15 +1,11 @@
 <template>
   <div>
-    <br />
-    <h1>MCROANTS</h1>
-    <p>Version Beta 1.0</p>
-    <br />
-    <hr />
+    <h1>Simulation</h1>
     <div class="row">
       <div class="col-12" v-if="!simulationStarted">
         <!-- MAIN CONFIG MENU -->
 
-        <h1>World Options</h1>
+        <h2>World Options</h2>
         <br />
         <div class="row">
           <div
@@ -45,41 +41,53 @@
 
       <!-- CONFIGURATION TRACKER -->
 
-      <div v-if="simulationStarted" class="col-12">
-        <h1>World Options</h1>
+      <div v-if="simulationStarted" class="row">
+        <div class="col-6">
+          <h2>World Options</h2>
 
-        <p>Max Nº of Food: {{ worldOptions.consumables.foods.maxNumber }}</p>
-        <p>
-          Max N° of Poison: {{ worldOptions.consumables.poisons.maxNumber }}
-        </p>
-        <p>Consumable/cycle: {{ worldOptions.consumablesPerCycle }}</p>
-        <p>Food Level/Food: {{ worldOptions.foodValue }}</p>
-        <p>
-          Grid: {{ worldOptions.gridSize }}x{{ worldOptions.gridSize }} (with
-          pixel proportion of {{ worldOptions.pixelProportion }})
-        </p>
-        <p>Poison Food Chance: {{ worldOptions.poisonFoodChance / 10 }}%</p>
-        <p>
-          Baby Ant Starting Food Level:
-          {{ worldOptions.babyAntStartingFoodLevel }}
-        </p>
-        <p>Crossover Rate: {{ worldOptions.crossoverRate }}%</p>
-        <p>
-          Allele Mutation Chance:
-          {{ worldOptions.alleleMutationChance / 100 }}%
-        </p>
-        <h2>Advanced Options</h2>
-        <p>
-          Poison Disappear after Consumption:
-          {{ worldOptions.advancedOptions.poisonDisappear }}
-        </p>
+          <p>Max Nº of Food: {{ worldOptions.consumables.foods.maxNumber }}</p>
+          <p>
+            Max N° of Poison: {{ worldOptions.consumables.poisons.maxNumber }}
+          </p>
+          <p>Consumable/cycle: {{ worldOptions.consumablesPerCycle }}</p>
+          <p>Food Level/Food: {{ worldOptions.foodValue }}</p>
+          <p>
+            Grid: {{ worldOptions.gridSize }}x{{ worldOptions.gridSize }} (with
+            pixel proportion of {{ worldOptions.pixelProportion }})
+          </p>
+          <p>Poison Food Chance: {{ worldOptions.poisonFoodChance / 10 }}%</p>
+          <p>
+            Baby Ant Starting Food Level:
+            {{ worldOptions.babyAntStartingFoodLevel }}
+          </p>
+          <p>Crossover Rate: {{ worldOptions.crossoverRate }}%</p>
+          <p>
+            Allele Mutation Chance:
+            {{ worldOptions.alleleMutationChance / 100 }}%
+          </p>
+          <h2>Advanced Options</h2>
+          <p>
+            Poison Disappear after Consumption:
+            {{ worldOptions.advancedOptions.poisonDisappear }}
+          </p>
 
-        <p>
-          Minimum Combat Point Difference:
-          {{ worldOptions.advancedOptions.minimumCombatPointDifference }}
-        </p>
+          <p>
+            Minimum Combat Point Difference:
+            {{ worldOptions.advancedOptions.minimumCombatPointDifference }}
+          </p>
 
-        <p>Mating Cost: {{ worldOptions.advancedOptions.matingCost }}</p>
+          <p>Mating Cost: {{ worldOptions.advancedOptions.matingCost }}</p>
+        </div>
+        <div class="col-6">
+          <h2>Universal Values</h2>
+          <p>Food Eaten: {{ universeStatus.foodEaten }}</p>
+          <p>Poison Eaten: {{ universeStatus.poisonEaten }}</p>
+          <p>Ant Deaths: {{ universeStatus.antDeaths }}</p>
+          <p>Ant Kills: {{ universeStatus.antKills }}</p>
+          <p>Breedings Occurred: {{ universeStatus.breedingsOccurred }}</p>
+          <p>Food Points Shared: {{ universeStatus.foodPointsShared }}</p>
+          <p>Fights Occurred: {{ universeStatus.fightsOccurred }}</p>
+        </div>
       </div>
       <hr />
       <div>
@@ -116,9 +124,6 @@
           />
           <br />
           <br />
-          <button @click="resetState" class="btn btn-danger">Reset</button>
-          <br />
-          <br />
         </div>
       </div>
     </div>
@@ -134,7 +139,8 @@
               v-for="(ant, index) in blackAnts"
               :key="`id-${ant.id}-index-${index}`"
             >
-              <ant-status :ant="ant" />
+              <p v-if="ant.tracked">TRACKED</p>
+              <ant-status :ant="ant" @trackAnt="trackAnt(ant.id)" />
             </div>
           </div>
         </div>
@@ -151,7 +157,8 @@
               v-for="(ant, index) in redAnts"
               :key="`id-${ant.id}-index-${index}`"
             >
-              <ant-status :ant="ant" />
+              <p v-if="ant.tracked">TRACKED</p>
+              <ant-status :ant="ant" @trackAnt="trackAnt(ant.id)" />
             </div>
           </div>
         </div>
@@ -259,6 +266,9 @@ export default {
       Object.keys(this.worldOptions.ants).forEach((antType) => {
         ctx.fillStyle = this.worldOptions.ants[antType].color;
         this[antType].forEach((ant) => {
+          if (ant.tracked) {
+            ctx.fillStyle = this.worldOptions.ants[antType].trackedColor;
+          }
           if (ant.alive) {
             ctx.fillRect(
               ant.position[0] * this.worldOptions.pixelProportion,
@@ -267,6 +277,7 @@ export default {
               this.worldOptions.pixelProportion
             );
           }
+          ctx.fillStyle = this.worldOptions.ants[antType].color;
         });
       });
 
@@ -290,6 +301,11 @@ export default {
       this.configs[index].value = Number(value);
       console.log(this.configs[index].value, Number(value));
       this.configs.push();
+    },
+
+    async trackAnt(id) {
+      await this.$store.dispatch("trackAnt", id);
+      this.updateCanvas();
     },
 
     async resetState() {
@@ -357,6 +373,10 @@ export default {
 
     antPhenotype() {
       return this.$store.getters.getAntPhenotype;
+    },
+
+    universeStatus() {
+      return this.$store.getters.getUniverseStatus;
     },
   },
 

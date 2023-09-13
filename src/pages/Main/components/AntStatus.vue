@@ -15,6 +15,13 @@
       </p>
       <p v-else>FOUNDER ANT</p>
       <p>KILLS {{ ant.kills }}</p>
+      <p>BREEDINGS {{ ant.breedings }}</p>
+      <p>HIGHEST FOOD LEVEL {{ ant.highestFoodLevel }}</p>
+      <button :class="buttonTrackColor[ant.tracked]" @click="trackAnt">
+        {{ buttonTrackText[ant.tracked] }}
+      </button>
+      <br />
+      <br />
     </div>
     <div v-else>
       <div style="margin-bottom: 25px">
@@ -29,6 +36,25 @@ export default {
   computed: {
     antPhenotype() {
       return this.$store.getters.getAntPhenotype;
+    },
+
+    buttonTrackText() {
+      return {
+        true: "UNTRACK ANT",
+        false: "TRACK ANT",
+      };
+    },
+
+    buttonTrackColor() {
+      return {
+        true: "btn btn-danger",
+        false: "btn btn-warning",
+      };
+    },
+  },
+  methods: {
+    trackAnt() {
+      this.$emit("trackAnt");
     },
   },
 

@@ -48,9 +48,9 @@ export const BASE_ANT = {
 
     generation: 0, // How far this family of ants has gone
 
-    firstParentId: -1, // The ID of the ant's first parent (-1 refers to ants that spawned when the simulation started)
+    firstParentId: -1, // The ID of the ant's first parent (-1 refers to ants that spawned when the simulation started, -2 refers to added ants)
 
-    secondParentId: -1, // The ID of the ant's second parent (-1 refers to ants that spawned when the simulation started)
+    secondParentId: -1, // The ID of the ant's second parent (-1 refers to ants that spawned when the simulation started, -2 refers to added ants)
 
     kills: 0, // The number of ants killed by this ant
 
@@ -106,7 +106,19 @@ export const CONFIG_DESCRIPTION = {
     minimumCombatPointDifference: "The minimal difference beetwen combat points so that the battle has a winner (see more in DOCUMENTATION on the top of the screen)",
     poisonDisappear: "Whether or not poison consumables disappear after being consumed",
     matingCost: "The cost required for ants to create offspring",
+    antEatersStartingNumber: "The number of ant eaters that will appear on the beggining of the simulation"
+}
 
+export const GENE_DESCRIPTION = {
+    vision: "How far away an ant can see consumables, other ants and anteaters",
+    exploration: "How the ant will behave when not seeing any points of interest",
+    poisonIdentification: "Either or not the ant can identify poison from common food",
+    foodForMating: "How much food the ant will wait to have before mating",
+    sharing: "The food sharing behaviors of an ant with other ants",
+    antVision: "Either or not the ant can see other ants",
+    anteaterVision: "Either or not the ant can see anteaters",
+    agression: "How the ant will react to other ants, relating to combat",
+    strength: "How strong the ant is",
 }
 
 //                 ALLELE TYPE TABLE

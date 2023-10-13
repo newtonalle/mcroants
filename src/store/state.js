@@ -37,6 +37,12 @@ export default () => ({
                 },
             },
 
+
+            antEaters: {
+                startingNumber: 2, // RECOMENDED 0 - 2
+                color: '#7d0bbf', // RECOMENDED: #7d0bbf
+            },
+
             consumablesPerCycle: 1,
             gridSize: 25, // RECOMENDED: 300 - 500
             foodValue: 10, // RECOMENDED 10+
@@ -69,6 +75,8 @@ export default () => ({
             foodPointsShared: 0,
 
             fightsOccurred: 0,
+
+            antsEaten: 0,
         },
 
         baseWorldGrid: [],
@@ -77,17 +85,19 @@ export default () => ({
 
         blackAnts: [],
 
+        ants: [],
+
         consumablesMap: [],
 
         antMap: [],
+
+        antEaterMap: [],
 
         emptyTiles: [],
 
         antPairs: [],
 
-        antEaters: [
-            { position: [0, 0] }
-        ],
+        antEaters: [],
 
         currentHighestAntID: 0,
 

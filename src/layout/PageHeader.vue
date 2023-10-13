@@ -7,7 +7,7 @@
           style="margin-left: 10px"
           class="navbar-brand"
           :to="{ name: 'main' }"
-          >MCROANTS (Version Beta 1.1)</router-link
+          >MCROANTS (Version 1.2 - Main Release)</router-link
         >
 
         <button

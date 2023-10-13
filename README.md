@@ -24,25 +24,11 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 
-### BETA 1.1 PLANS
+### 1.0 Main Release
 
-* Add DOCUMENTATION Screen - Done
-* Add a TOOLBAR - Done
-* Implement the ANT VISION allele - Done
-* Hall of Fame - Done
-* Implement Update Log Screen - Done
-* Implement Universal Values - Done
-* Implement ant tracking function - Done
-
-### BETA 1.2 PLANS
-
-* Implement Ant Eaters
-* Fix Consumable Spawning System (From Guessing to Picking at Random, based on an array)
-
-### 1.3 Main Release
-
-* Finish implementing Genes
-* Polish Code
+* Polish Code (ant death [implement death type feature], apply config, visual examples of ant movement situations for future reference and in the documentaions screen)
+* BUG FIX - Ant Eaters too OP
+* ?Fix Consumable Spawning System (From Guessing to Picking at Random, based on an array)
 
 ### 1.1
 

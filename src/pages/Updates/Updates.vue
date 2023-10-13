@@ -13,6 +13,26 @@
 
       <br />
 
+      <h3>Main Release 1.2 (Mid October 2023)</h3>
+
+      <br />
+
+      <p>* Added INTRODUCTIONS Section to the Main Page</p>
+      <p>* Polished Back-End Code</p>
+      <p>* Polished Front-End Code</p>
+      <p>* Implemented Ant Data Exporting (All & Individual Ants)</p>
+      <p>* Implemented Manual Ant Creation</p>
+      <p>* Implemented Ant Eaters</p>
+      <p>* Fully Implemented Ant Trackers</p>
+      <p>* Implemented All of the Ants' Genes</p>
+      <p>* Small Improvements to the DOCUMENTATION Screen</p>
+
+      <br />
+
+      <hr />
+
+      <br />
+
       <h3>Beta 1.1 (Mid Setember 2023)</h3>
 
       <br />
@@ -34,8 +54,7 @@
       <br />
 
       <hr />
-      <br />
-      <br />
+
       <br />
       <br />
       <br />

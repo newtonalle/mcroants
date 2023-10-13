@@ -170,6 +170,8 @@
 
       <p>Fights Occurred;</p>
 
+      <p>Ants Eaten;</p>
+
       <p>You may find this data in UNIVERSE STATUS at the top of the page</p>
 
       <br />

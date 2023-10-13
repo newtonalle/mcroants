@@ -1,387 +1,162 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-2">
+        <img
+          src="../../../public\favicon.png"
+          alt="ANT"
+          height="100px"
+          width="100px"
+          style="
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+          "
+        />
+      </div>
+      <div class="col-8">
+        <h1>Introductions</h1>
+
+        <br />
+
+        <p>
+          Mcroants is a simulator that has as a main objective to teach and
+          prove to its users about how the studies of Genetics work, this is
+          done via a simulation, completly controlable by the user, that
+          simulates an ecosystem formed of ants, consumables & ant eaters
+        </p>
+        <p>
+          If this is your first time accessing Mcroants, please consider reading
+          the DOCUMENTATION page
+        </p>
+
+        <br />
+      </div>
+      <div class="col-2">
+        <img
+          src="../../../public\favicon.png"
+          alt="ANT"
+          height="100px"
+          width="100px"
+          style="
+            -webkit-transform: rotate(315deg);
+            -moz-transform: rotate(315deg);
+            -ms-transform: rotate(315deg);
+            -o-transform: rotate(315deg);
+            transform: rotate(315deg);
+          "
+        />
+      </div>
+      <hr />
+      <br />
+    </div>
+
     <h1>Simulation</h1>
+
     <div class="row">
       <div class="col-12" v-if="!simulationStarted">
-        <!-- MAIN CONFIG MENU -->
+        <!-- PRE-SIMULATION MENU -->
 
-        <h2>World Options</h2>
+        <ant-creation />
+
         <br />
-        <div class="row">
-          <div
-            class="col-4"
-            v-for="(config, index) in configs"
-            :key="`index-${index}-label-${config.name}`"
-          >
-            <input-model
-              :index="index"
-              :label="config.label"
-              :entryValue="config.value"
-              :configName="config.name"
-              @saveSetting="saveSetting"
-            />
-          </div>
-        </div>
-        <div>
-          <!-- CONFIRMATION BUTTONS -->
-          <br />
-          <br />
-          <button
-            :disabled="simulationStarted"
-            @click="startSimulation"
-            style="width: 200px"
-            class="btn btn-success"
-          >
-            Setup
-          </button>
-          <br />
-          <br />
-        </div>
+        <hr />
+        <br />
+
+        <worldOptions />
+
+        <br />
       </div>
 
       <!-- CONFIGURATION TRACKER -->
 
       <div v-if="simulationStarted" class="row">
         <div class="col-6">
-          <h2>World Options</h2>
-
-          <p>Max Nº of Food: {{ worldOptions.consumables.foods.maxNumber }}</p>
-          <p>
-            Max N° of Poison: {{ worldOptions.consumables.poisons.maxNumber }}
-          </p>
-          <p>Consumable/cycle: {{ worldOptions.consumablesPerCycle }}</p>
-          <p>Food Level/Food: {{ worldOptions.foodValue }}</p>
-          <p>
-            Grid: {{ worldOptions.gridSize }}x{{ worldOptions.gridSize }} (with
-            pixel proportion of {{ worldOptions.pixelProportion }})
-          </p>
-          <p>Poison Food Chance: {{ worldOptions.poisonFoodChance / 10 }}%</p>
-          <p>
-            Baby Ant Starting Food Level:
-            {{ worldOptions.babyAntStartingFoodLevel }}
-          </p>
-          <p>Crossover Rate: {{ worldOptions.crossoverRate }}%</p>
-          <p>
-            Allele Mutation Chance:
-            {{ worldOptions.alleleMutationChance / 100 }}%
-          </p>
-          <h2>Advanced Options</h2>
-          <p>
-            Poison Disappear after Consumption:
-            {{ worldOptions.advancedOptions.poisonDisappear }}
-          </p>
-
-          <p>
-            Minimum Combat Point Difference:
-            {{ worldOptions.advancedOptions.minimumCombatPointDifference }}
-          </p>
-
-          <p>Mating Cost: {{ worldOptions.advancedOptions.matingCost }}</p>
+          <configuration-tracker />
         </div>
         <div class="col-6">
-          <h2>Universal Values</h2>
-          <p>Food Eaten: {{ universeStatus.foodEaten }}</p>
-          <p>Poison Eaten: {{ universeStatus.poisonEaten }}</p>
-          <p>Ant Deaths: {{ universeStatus.antDeaths }}</p>
-          <p>Ant Kills: {{ universeStatus.antKills }}</p>
-          <p>Breedings Occurred: {{ universeStatus.breedingsOccurred }}</p>
-          <p>Food Points Shared: {{ universeStatus.foodPointsShared }}</p>
-          <p>Fights Occurred: {{ universeStatus.fightsOccurred }}</p>
+          <universe-status-tracker />
         </div>
       </div>
+
       <hr />
-      <div>
-        <!-- COUNTERS AND SIMULTATING OPTIONS -->
 
-        <div v-if="simulationStarted">
-          <h1>CYCLE #{{ currentCycle }}</h1>
-          <br />
-          <br />
-          <button
-            :disabled="!simulationStarted"
-            @click="cycleStep"
-            class="btn btn-primary"
-          >
-            Cycle Step
-          </button>
-          <button
-            :disabled="!simulationStarted"
-            @click="autoCycle"
-            style="width: 50px; margin-left: 10px"
-            class="btn btn-outline-warning"
-          >
-            ⚙️
-          </button>
-          <br />
-          <br />
+      <!-- CANVAS AND RUNNING ACTIONS -->
 
-          <!-- WORLD CANVAS -->
-
-          <canvas
-            id="myCanvas"
-            :width="worldOptions.gridSize * worldOptions.pixelProportion"
-            :height="worldOptions.gridSize * worldOptions.pixelProportion"
-          />
-          <br />
-          <br />
-        </div>
+      <div v-if="simulationStarted">
+        <simulation-canvas />
       </div>
     </div>
+    <br />
+
+    <!-- ANT TRACKER -->
+
+    <h1>Current Ants</h1>
+
     <div class="row">
-      <!-- ANT TRACKER -->
-
-      <div class="col-6">
-        <div v-if="blackAnts.length != 0">
-          <div class="row">
-            <h1>Black Ants</h1>
-            <div
-              class="col-3"
-              v-for="(ant, index) in blackAnts"
-              :key="`id-${ant.id}-index-${index}`"
-            >
-              <p v-if="ant.tracked">TRACKED</p>
-              <ant-status :ant="ant" @trackAnt="trackAnt(ant.id)" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ANT TRACKER -->
-
-      <div class="col-6">
-        <div v-if="redAnts.length != 0">
-          <div class="row">
-            <h1>Red Ants</h1>
-            <div
-              class="col-3"
-              v-for="(ant, index) in redAnts"
-              :key="`id-${ant.id}-index-${index}`"
-            >
-              <p v-if="ant.tracked">TRACKED</p>
-              <ant-status :ant="ant" @trackAnt="trackAnt(ant.id)" />
-            </div>
-          </div>
-        </div>
+      <div
+        class="col-6"
+        v-for="(ant, index) in globalAnts"
+        :key="`id-${ant.id}-index-${index}`"
+      >
+        <ant-status :ant="ant" />
+        <hr />
       </div>
     </div>
+
+    <p v-if="globalAnts.length === 0">No ants available!</p>
+
+    <br />
+    <br />
+    <br />
+
+    <p v-if="antsExported">{{ globalAnts }}</p>
+    <button
+      :disabled="globalAnts.length === 0"
+      style="width: 85%"
+      class="btn btn-success"
+      @click="antsExported = !antsExported"
+    >
+      Export All Ants
+    </button>
+
+    <br />
+    <br />
   </div>
 </template>
 
 <script>
+import SimulationCanvas from "./components/SimulationCanvas.vue";
+import ConfigurationTracker from "./components/ConfigurationTracker.vue";
+import UniverseStatusTracker from "./components/UniverseStatusTracker.vue";
+import AntCreation from "./components/AntCreation.vue";
 import AntStatus from "./components/AntStatus.vue";
-import InputModel from "./components/InputModel.vue";
+import WorldOptions from "./components/WorldOptions.vue";
 
 export default {
-  components: { AntStatus, InputModel },
+  components: {
+    SimulationCanvas,
+    AntStatus,
+    AntCreation,
+    ConfigurationTracker,
+    UniverseStatusTracker,
+    WorldOptions,
+  },
 
   data: () => ({
-    setIntervalId: -1,
-    autoCycleActive: false,
-    autoCycleSpeed: 50, // Interval in milliseconds
-    selectedAnts: {
-      blackAnts: [0, 0],
-      redAnts: [0, 0],
-    },
-
-    configs: [
-      { value: 0, name: "foodStartingNumber", label: "Food Starting Number" },
-      { value: 20, name: "foodMaxNumber", label: "Food Max Number" },
-      {
-        value: 0,
-        name: "poisonStartingNumber",
-        label: "Poison Starting Number",
-      },
-      { value: 0, name: "poisonMaxNumber", label: "Poison Max Number" },
-      {
-        value: 2,
-        name: "blackAntsStartingNumber",
-        label: "Black Ants Starting Number",
-      },
-      {
-        value: 2,
-        name: "redAntsStartingNumber",
-        label: "Red Ants Starting Number",
-      },
-      { value: 1, name: "consumablesPerCycle", label: "Consumables Per Cycle" },
-      { value: 25, name: "gridSize", label: "Grid Size" },
-      { value: 10, name: "foodValue", label: "Food Value" },
-      { value: 10, name: "pixelProportion", label: "Pixel Proportion" },
-      {
-        value: 0,
-        name: "poisonFoodChance",
-        label: "Poison Food Chance (in 1000)",
-      },
-      {
-        value: 1000,
-        name: "antStartingFoodLevel",
-        label: "Ant Starting Food Level",
-      },
-      {
-        value: 200,
-        name: "babyAntStartingFoodLevel",
-        label: "Baby Ant Starting Food Level",
-      },
-      { value: 1, name: "crossoverRate", label: "Crossover Rate (in 100)" },
-      {
-        value: 100,
-        name: "alleleMutationChance",
-        label: "Allele Mutation Chance (in 10000)",
-      },
-      {
-        value: 100,
-        name: "minimumCombatPointDifference",
-        label: "Minimum Combat Point Difference",
-      },
-      {
-        value: 0,
-        name: "poisonDisappear",
-        label: "Poison Disappear (0 is false, 1 is true)",
-      },
-      { value: 500, name: "matingCost", label: "Mating Cost" },
-    ],
+    antsExported: false,
   }),
-
-  methods: {
-    updateCanvas() {
-      var canvas = document.getElementById("myCanvas");
-
-      if (!canvas) {
-        return;
-      }
-
-      var ctx = canvas.getContext("2d");
-
-      // Draw Background
-
-      ctx.fillStyle = this.worldOptions.backgroundColor;
-      ctx.fillRect(
-        0,
-        0,
-        this.worldOptions.gridSize * this.worldOptions.pixelProportion,
-        this.worldOptions.gridSize * this.worldOptions.pixelProportion
-      );
-
-      // Draw Ants
-
-      Object.keys(this.worldOptions.ants).forEach((antType) => {
-        ctx.fillStyle = this.worldOptions.ants[antType].color;
-        this[antType].forEach((ant) => {
-          if (ant.tracked) {
-            ctx.fillStyle = this.worldOptions.ants[antType].trackedColor;
-          }
-          if (ant.alive) {
-            ctx.fillRect(
-              ant.position[0] * this.worldOptions.pixelProportion,
-              ant.position[1] * this.worldOptions.pixelProportion,
-              this.worldOptions.pixelProportion,
-              this.worldOptions.pixelProportion
-            );
-          }
-          ctx.fillStyle = this.worldOptions.ants[antType].color;
-        });
-      });
-
-      // Draw Consumables
-
-      Object.keys(this.worldOptions.consumables).forEach((consumableType) => {
-        ctx.fillStyle = this.worldOptions.consumables[consumableType].color;
-        this[consumableType].forEach((consumable) => {
-          ctx.fillRect(
-            consumable[0] * this.worldOptions.pixelProportion,
-            consumable[1] * this.worldOptions.pixelProportion,
-            this.worldOptions.pixelProportion,
-            this.worldOptions.pixelProportion
-          );
-        });
-      });
-    },
-
-    saveSetting(value, index) {
-      console.log(this.configs[index].value, Number(value));
-      this.configs[index].value = Number(value);
-      console.log(this.configs[index].value, Number(value));
-      this.configs.push();
-    },
-
-    async trackAnt(id) {
-      await this.$store.dispatch("trackAnt", id);
-      this.updateCanvas();
-    },
-
-    async resetState() {
-      await this.$store.dispatch("resetState");
-      clearInterval(this.setIntervalId);
-      this.updateCanvas();
-    },
-
-    async cycleStep() {
-      await this.$store.dispatch("cycleStep");
-      this.updateCanvas();
-    },
-
-    async startSimulation() {
-      await this.$store.dispatch("applyConfig", this.configs);
-      await this.$store.dispatch("environmentSetup");
-      this.updateCanvas();
-    },
-
-    async autoCycle() {
-      if (this.autoCycleActive) {
-        this.autoCycleActive = false;
-        clearInterval(this.setIntervalId);
-      } else {
-        this.autoCycleActive = true;
-        this.setIntervalId = setInterval(async () => {
-          await this.cycleStep();
-        }, this.autoCycleSpeed);
-      }
-    },
-  },
 
   computed: {
     simulationStarted() {
       return this.$store.getters.getSimulationStarted;
     },
 
-    blackAnts() {
-      return this.$store.getters.getBlackAnts;
+    globalAnts() {
+      return this.$store.getters.getGlobalAnts;
     },
-
-    redAnts() {
-      return this.$store.getters.getRedAnts;
-    },
-
-    foods() {
-      return this.$store.getters.getFoods;
-    },
-
-    poisons() {
-      return this.$store.getters.getPoisons;
-    },
-
-    antEaters() {
-      return this.$store.getters.getAntEaters;
-    },
-
-    worldOptions() {
-      return this.$store.getters.getWorldOptions;
-    },
-
-    currentCycle() {
-      return this.$store.getters.getCurrentCycle;
-    },
-
-    antPhenotype() {
-      return this.$store.getters.getAntPhenotype;
-    },
-
-    universeStatus() {
-      return this.$store.getters.getUniverseStatus;
-    },
-  },
-
-  mounted() {
-    this.updateCanvas();
   },
 };
 </script>

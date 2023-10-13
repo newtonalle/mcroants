@@ -1,8 +1,11 @@
 import { CONFIG_DESCRIPTION } from './constants.js'
+import { GENE_DESCRIPTION } from './constants.js'
 
 export const getSimulationStarted = (state) => state.gameState.simulationStarted
 
 export const getConfigDescription = () => CONFIG_DESCRIPTION
+
+export const getGeneDescription = () => GENE_DESCRIPTION
 
 export const getUniverseStatus = (state) => state.gameState.universeStatus
 
@@ -21,35 +24,34 @@ export const getAntPhenotype = (state) => {
 
     }
 
-    Object.keys(state.gameState.worldOptions.ants).forEach((antType) => {
-        state.gameState[antType].forEach((ant) => {
 
-            let antPhenotype = []
+    state.gameState.ants.forEach((ant) => {
 
-            for (let alleleType = 0; alleleType < ant.cromossomes[0].length; alleleType++) {
+        let antPhenotype = []
 
-                let dominantAllele
+        for (let alleleType = 0; alleleType < ant.cromossomes[0].length; alleleType++) {
 
-                if (ant.cromossomes[0][alleleType] >= ant.cromossomes[1][alleleType]) {
+            let dominantAllele
 
-                    // The dominant allele is either the first cromossome's, or they are equal, so it doesn't matter
+            if (ant.cromossomes[0][alleleType] >= ant.cromossomes[1][alleleType]) {
 
-                    dominantAllele = ant.cromossomes[0][alleleType]
-                } else {
+                // The dominant allele is either the first cromossome's, or they are equal, so it doesn't matter
 
-                    // The dominant allele is the second cromossome's
+                dominantAllele = ant.cromossomes[0][alleleType]
+            } else {
 
-                    dominantAllele = ant.cromossomes[1][alleleType]
-                }
+                // The dominant allele is the second cromossome's
 
-
-                antPhenotype.push(dominantAllele)
-
+                dominantAllele = ant.cromossomes[1][alleleType]
             }
 
 
-            phenotypesById[ant.id] = antPhenotype
-        });
+            antPhenotype.push(dominantAllele)
+
+        }
+
+
+        phenotypesById[ant.id] = antPhenotype
     });
 
     return phenotypesById
@@ -83,15 +85,7 @@ export const getPoisons = (state) => {
     return poisons
 }
 
-export const getGlobalAnts = (state) => {
-    let globalAnts = []
-
-    Object.keys(state.gameState.worldOptions.ants).forEach(antType => {
-        globalAnts.push(...state.gameState[antType])
-    });
-
-    return globalAnts
-}
+export const getGlobalAnts = (state) => state.gameState.ants
 
 export const getAntEaters = (state) => state.gameState.antEaters
 

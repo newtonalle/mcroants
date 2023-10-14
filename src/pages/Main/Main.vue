@@ -2,19 +2,19 @@
   <div>
     <div class="row">
       <div class="col-2">
-        <!-- <img
-          src="../../../public\favicon.png"
+        <img
+          src="../../assets/favicon.png"
           alt="ANT"
           height="100px"
           width="100px"
           style="
-            -webkit-transform: rotate(45deg);
-            -moz-transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            -o-transform: rotate(45deg);
-            transform: rotate(45deg);
+            -webkit-transform: rotate(315deg);
+            -moz-transform: rotate(315deg);
+            -ms-transform: rotate(315deg);
+            -o-transform: rotate(315deg);
+            transform: rotate(315deg);
           "
-        /> -->
+        />
       </div>
       <div class="col-8">
         <h1>Introductions</h1>
@@ -35,8 +35,8 @@
         <br />
       </div>
       <div class="col-2">
-        <!-- <img
-          src="../../../public\favicon.png"
+        <img
+          src="../../assets/favicon.png"
           alt="ANT"
           height="100px"
           width="100px"
@@ -47,7 +47,7 @@
             -o-transform: rotate(315deg);
             transform: rotate(315deg);
           "
-        /> -->
+        />
       </div>
       <hr />
       <br />

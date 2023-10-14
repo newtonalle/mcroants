@@ -2,7 +2,7 @@
   <div>
     <div class="row">
       <div class="col-2">
-        <img
+        <!-- <img
           src="../../../public\favicon.png"
           alt="ANT"
           height="100px"
@@ -14,7 +14,7 @@
             -o-transform: rotate(45deg);
             transform: rotate(45deg);
           "
-        />
+        /> -->
       </div>
       <div class="col-8">
         <h1>Introductions</h1>
@@ -35,7 +35,7 @@
         <br />
       </div>
       <div class="col-2">
-        <img
+        <!-- <img
           src="../../../public\favicon.png"
           alt="ANT"
           height="100px"
@@ -47,7 +47,7 @@
             -o-transform: rotate(315deg);
             transform: rotate(315deg);
           "
-        />
+        /> -->
       </div>
       <hr />
       <br />

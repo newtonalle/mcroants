@@ -5,6 +5,9 @@
     <div v-if="simulationStarted">
       <h1>CYCLE #{{ currentCycle }}</h1>
 
+      <p>aeaeaeae</p>
+      <p>{{ antEaters[0].energyCounter }}</p>
+
       <br />
       <br />
 

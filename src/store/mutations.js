@@ -39,6 +39,9 @@ const GENE_LOCUS = {
 
 const ANTEATER_VISION = 20
 
+const ANTEATER_ENERGY_BUFFER = 3 // Proportion compared to the grid size
+const ANTEATER_ENERGY_COOLDOWN = 25 // Cycles
+
 function calculateDirectionFormula(direction, startingPosition, distance) {
     let formula = []
     switch (direction) {
@@ -97,6 +100,15 @@ function calculateParallelDirection(direction) {
     const parallelDirection = parallelDirections[Math.floor(Math.random() * 2)]
 
     return parallelDirection
+}
+
+function antDeath(ant, deathType, currentCycle, universeStatus) {
+
+    console.log(`Ant #${ant.id} died! Cause: ${deathType}`)
+    ant.alive = false
+    ant.deathType = deathType
+    universeStatus.antDeaths++
+    ant.deathCycle = currentCycle
 }
 
 export const setState = (prevState, newState) => {
@@ -241,6 +253,7 @@ export const generateAntEaters = (state) => {
         let antEater = {
             position: position,
             direction: -1,
+            energyCounter: ANTEATER_ENERGY_BUFFER * state.gameState.worldOptions.gridSize
         }
 
         state.gameState.antEaters.push(antEater)
@@ -547,10 +560,7 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
                 ant.foodLevel--
                 if (ant.foodLevel <= 0) {
-                    console.log(`Ant #${ant.id} died of hunger!`)
-                    ant.alive = false
-                    state.gameState.universeStatus.antDeaths++
-                    ant.deathCycle = state.gameState.currentCycle
+                    antDeath(ant, "STARVATION", state.gameState.currentCycle, state.gameState.universeStatus)
                 }
 
             }
@@ -563,10 +573,11 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                         state.gameState.consumablesMap[ant.position[0]][ant.position[1]] = 0
                     }
                     state.gameState.universeStatus.poisonEaten++
-                    console.log(`Ant #${ant.id} died of poisoning!`)
-                    ant.alive = false
-                    state.gameState.universeStatus.antDeaths++
-                    ant.deathCycle = state.gameState.currentCycle
+                    antDeath(ant, "POISONING", state.gameState.currentCycle, state.gameState.universeStatus)
+                    /*                    console.log(`Ant #${ant.id} died of poisoning!`)
+                                        ant.alive = false
+                                        state.gameState.universeStatus.antDeaths++
+                                        ant.deathCycle = state.gameState.currentCycle */
                 }
             }
 
@@ -574,11 +585,11 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
 
             if (ant.alive) {
                 if (state.gameState.antEaterMap[ant.position[0]][ant.position[1]].length > 0) {
-                    console.log(`Ant #${ant.id} was eaten by an Ant Eater!`)
-                    state.gameState.universeStatus.antsEaten++
+                    antDeath(ant, "EATEN BY ANTEATER", state.gameState.currentCycle, state.gameState.universeStatus)
+                    /* state.gameState.universeStatus.antsEaten++
                     ant.alive = false
                     state.gameState.universeStatus.antDeaths++
-                    ant.deathCycle = state.gameState.currentCycle
+                    ant.deathCycle = state.gameState.currentCycle */
                 }
             }
 
@@ -822,11 +833,14 @@ export const updateCycleValues = (state, { globalAnts, antPhenotype }) => {
                                 antPair[winner].kills++
 
                                 console.log(`Ant #${antPair[loser].id} was killed by ${antPair[winner].id}!`)
-                                antPair[loser].alive = false
-                                state.gameState.universeStatus.antDeaths++
-                                antPair[loser].deathCycle = state.gameState.currentCycle
+                                antDeath(antPair[loser], "KILLED BY ANT", state.gameState.currentCycle, state.gameState.universeStatus)
+                                /* antPair[loser].alive = false
+                                 state.gameState.universeStatus.antDeaths++
+                                 antPair[loser].deathCycle = state.gameState.currentCycle
+                                 */
                                 let antIndex = state.gameState.antMap[antPair[loser].position[0]][antPair[loser].position[1]].findIndex((antId) => antId === antPair[loser].id)
                                 state.gameState.antMap[antPair[loser].position[0]][antPair[loser].position[1]].splice(antIndex, 1)
+
                             }
 
                         }
@@ -982,6 +996,7 @@ export const breedAnts = (state, { firstParent, secondParent }) => {
         age: 0,
         birthCycle: state.gameState.currentCycle,
         deathCycle: -1,
+        deathType: "",
         generation: generation,
         firstParentId: firstParent.id,
         secondParentId: secondParent.id,
@@ -1014,6 +1029,7 @@ export const createAnt = (state, antData) => {
         age: 0,
         birthCycle: state.gameState.currentCycle,
         deathCycle: -1,
+        deathType: "",
         generation: 0,
         firstParentId: -2,
         secondParentId: -2,
@@ -1030,44 +1046,52 @@ export const createAnt = (state, antData) => {
 
 export const chooseAntEatersDirection = (state) => {
     state.gameState.antEaters.forEach(antEater => {
-        let decidedDirection = false
-        let direction = -1
+        antEater.energyCounter--
+        if (antEater.energyCounter > 0) {
+            let decidedDirection = false
+            let direction = -1
 
-        // EXPLORATING 
+            // EXPLORATING 
 
-        if (antEater.direction === -1) {
+            if (antEater.direction === -1) {
 
-            direction = Math.floor(Math.random() * 4) // 0..3
+                direction = Math.floor(Math.random() * 4) // 0..3
 
-        }
+            }
 
-        if (direction != -1) {
-            antEater.direction = direction
-        }
+            if (direction != -1) {
+                antEater.direction = direction
+            }
 
-        for (let distanceFromAntEater = 1; distanceFromAntEater <= ANTEATER_VISION && !decidedDirection; distanceFromAntEater++) {
+            for (let distanceFromAntEater = 1; distanceFromAntEater <= ANTEATER_VISION && !decidedDirection; distanceFromAntEater++) {
 
-            // LOOKING FOR ANTS IN RANGE
+                // LOOKING FOR ANTS IN RANGE
 
-            POSSIBLE_DIRECTIONS.forEach(possibleDirection => {
-                let directionFormula = calculateDirectionFormula(possibleDirection, antEater.position, distanceFromAntEater)
+                POSSIBLE_DIRECTIONS.forEach(possibleDirection => {
+                    let directionFormula = calculateDirectionFormula(possibleDirection, antEater.position, distanceFromAntEater)
 
-                if (validPosition(directionFormula, state.gameState.worldOptions.gridSize)) {
+                    if (validPosition(directionFormula, state.gameState.worldOptions.gridSize)) {
 
-                    let identifiedTile = state.gameState.antMap[directionFormula[0]][directionFormula[1]]
+                        let identifiedTile = state.gameState.antMap[directionFormula[0]][directionFormula[1]]
 
-                    // FOUND ANT
+                        // FOUND ANT
 
-                    if (identifiedTile.length > 0) {
-                        direction = possibleDirection
-                        decidedDirection = true
+                        if (identifiedTile.length > 0) {
+                            direction = possibleDirection
+                            decidedDirection = true
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        if (direction != -1) {
-            antEater.direction = direction
+            if (direction != -1) {
+                antEater.direction = direction
+            }
+        } else {
+            antEater.direction = -1
+            if (antEater.energyCounter <= -ANTEATER_ENERGY_COOLDOWN) {
+                antEater.energyCounter = ANTEATER_ENERGY_BUFFER * state.gameState.worldOptions.gridSize
+            }
         }
     })
 }

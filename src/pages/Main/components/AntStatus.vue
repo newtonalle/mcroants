@@ -13,7 +13,10 @@
       <p>AGE ({{ ant.age }}, GENERATION {{ ant.generation }})</p>
       <p>BORN IN {{ ant.birthCycle }}</p>
       <p v-if="ant.alive">ALIVE</p>
-      <p v-else>DEAD, DIED IN {{ ant.deathCycle }}</p>
+      <div v-else>
+        <p>DEAD, DIED IN {{ ant.deathCycle }}</p>
+        <p>CAUSE OF DEATH ({{ ant.deathType }})</p>
+      </div>
       <p v-if="ant.firstParentId > -1 && ant.secondParentId > -1">
         PARENTS (ANT #{{ ant.firstParentId }} & ANT #{{ ant.secondParentId }})
       </p>

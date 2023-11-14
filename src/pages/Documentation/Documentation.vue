@@ -27,10 +27,14 @@
 
       <br />
 
-      <h4>Ant Behavior</h4>
+      <h4>Ant/Ant Eater Behavior</h4>
       <p>Value Definition</p>
-      <p>Movement</p>
-      <p>Genes/Alleles</p>
+      <p>Ant Movement</p>
+      <p>Ant Eater Movement</p>
+      <p>Ant Genes/Alleles</p>
+
+      <h5>Ant Relations</h5>
+
       <p>Breeding</p>
       <p>Sharing</p>
       <p>Fighting</p>
@@ -137,7 +141,7 @@
 
       <p>Ant Eaters are represented by purple pixels;</p>
 
-      <canvas id="documentationCanvas" :width="400" :height="100" />
+      <canvas id="documentationCanvas" :width="600" :height="100" />
 
       <p>
         Ant Tracker: You may see all of an ant's statistics, and even color it
@@ -259,6 +263,26 @@
 
       <br />
 
+      <p>
+        An ant eater will have some values that define their next behaviors,
+        being a lot simpler than ants:
+      </p>
+
+      <p>Id: Identifier for the ant eater;</p>
+      <p>
+        Position: [X, Y] Defines the ant eaters's postion on the grid, being X
+        the horizontal distance of the left border and Y the vertical distance
+        from the top border;
+      </p>
+      <p>
+        Current Energy: A timer for the ant eaters's movement, moving will
+        consume 1 of the energy counter, if the counter is 0 or less, the ant
+        eater will have to wait before moving again, giving time for close ants
+        to escape;
+      </p>
+
+      <br />
+
       <h4>Movement</h4>
       <p>
         Many diffent factors affect ant movement, such as consumables, other
@@ -304,6 +328,76 @@
         poison because it is trapped
       </p>
 
+      <br />
+
+      <h5>EXAMPLES</h5>
+
+      <p>
+        Following, there will be a few images describing situations the ant
+        might find themselves in
+      </p>
+
+      <p>
+        Consider blue pixels the simulation's borders or something the wants to
+        avoid (like poison)
+      </p>
+
+      <p>
+        Consider white pixels as the main ant & red pixels as secondary ants (of
+        a different species than the main one, meaning they can't reproduce and
+        aren't attracted to each other);
+      </p>
+
+      <p>Consider lime pixels as poison & purple pixels as anteaters</p>
+
+      <br />
+
+      <div class="row">
+        <div class="col-6">
+          <h5>Ant Obstacle Reaction</h5>
+          <p>
+            Gray pixels represent where the ant was in the last cycles, being
+            darker the older the simulation, describing its movement
+          </p>
+          <p>The arrows represent the new direction the ant will try to move</p>
+
+          <br />
+          <br />
+
+          <img
+            src="../../assets/Ant-Wall-Movement.png"
+            alt="Ant Food Blocking Relations"
+            width="250px"
+          />
+        </div>
+        <div class="col-6">
+          <h5>Ant Vision Situations</h5>
+          <p>
+            The eye sybol represents either or not the ant can see the left-most
+            entity/consumable, through the middle one
+          </p>
+          <p>
+            The big colored pixel represents the element identified by the ant,
+            and the ant will react according to what it saw
+          </p>
+          <p>
+            The green arrow represents the order the ant sees the elements, and
+            it will react to one or another element, depending on what is higher
+            on its priority list (given by its alleles)
+          </p>
+
+          <br />
+          <br />
+
+          <img
+            src="../../assets/Ant-FoodBlocking-Relations.png"
+            alt="Ant Wall Movement"
+            width="250px"
+          />
+        </div>
+      </div>
+
+      <br />
       <br />
 
       <h4>Genes/Alleles</h4>
@@ -454,7 +548,11 @@
       <h2>References & Credits</h2>
       <p>Original concept and simulator by Stephen Wright (Mcroants 1992)</p>
       <p>Rework & Online Adaptation by Newton Alle (Mcroants 2023)</p>
-      <p>Original documentation file: <a href="">Mcroants.docs</a></p>
+      <!--<p>Original documentation file: <a href="">Mcroants.docs</a></p>-->
+      <p>
+        Plese remember that this is a solo project and that many glitches and
+        bugs may be present, if you find any, please consider contacting me!
+      </p>
       <br />
       <br />
       <p>Thanks for using Mcroants (2023)</p>
@@ -492,6 +590,9 @@ export default {
 
     ctx.fillStyle = this.worldOptions.ants.blackAnts.color;
     ctx.fillRect(325, 10, 50, 50);
+
+    ctx.fillStyle = this.worldOptions.antEaters.color;
+    ctx.fillRect(425, 10, 50, 50);
   },
 };
 </script>

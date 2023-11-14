@@ -8,11 +8,11 @@
           height="100px"
           width="100px"
           style="
-            -webkit-transform: rotate(315deg);
-            -moz-transform: rotate(315deg);
-            -ms-transform: rotate(315deg);
-            -o-transform: rotate(315deg);
-            transform: rotate(315deg);
+            -webkit-transform: rotate(45deg);
+            -moz-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            -o-transform: rotate(45deg);
+            transform: rotate(45deg);
           "
         />
       </div>

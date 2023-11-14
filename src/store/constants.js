@@ -46,6 +46,8 @@ export const BASE_ANT = {
 
     deathCycle: -1, // The death cycle of the ant
 
+    deathType: "", // The death type of the ant
+
     generation: 0, // How far this family of ants has gone
 
     firstParentId: -1, // The ID of the ant's first parent (-1 refers to ants that spawned when the simulation started, -2 refers to added ants)

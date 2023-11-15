@@ -283,7 +283,7 @@
 
       <br />
 
-      <h4>Movement</h4>
+      <h4>Ant Movement</h4>
       <p>
         Many diffent factors affect ant movement, such as consumables, other
         ants & ant eaters, so this section is divided into 2 parts, the
@@ -348,7 +348,7 @@
         aren't attracted to each other);
       </p>
 
-      <p>Consider lime pixels as poison & purple pixels as anteaters</p>
+      <p>Consider lime pixels as poison & purple pixels as Ant Eaters</p>
 
       <br />
 
@@ -396,6 +396,24 @@
           />
         </div>
       </div>
+
+      <br />
+      <br />
+
+      <h4>Ant Eater Movement</h4>
+
+      <br />
+
+      <p>
+        Ant Eaters will try to move towards ants in their view range, if there
+        are none, they will just move around aimlessly;
+      </p>
+      <p>
+        Ant Eaters have a counter of how much cycles they can walk before having
+        to rest, a counter that is defined by the size of the grid, giving some
+        time for ants to escape the Ant Eater if they have the necessary
+        alleles;
+      </p>
 
       <br />
       <br />
@@ -461,10 +479,10 @@
 
       <br />
 
-      <h5>GENE 7: ANTEATER VISION</h5>
+      <h5>GENE 7: ANT EATER VISION</h5>
 
-      <p>0 - ant CANNOT see an anteater</p>
-      <p>1 - ant CAN see an anteater</p>
+      <p>0 - ant CANNOT see an ANT EATER</p>
+      <p>1 - ant CAN see an ANT EATER</p>
 
       <br />
 
